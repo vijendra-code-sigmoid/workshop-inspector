@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 
-st.sidebar.image("Hero_MotoCorp_Logo.png", use_column_width=True)
+st.sidebar.image("Hero_MotoCorp_Logo.png", use_container_width=True)
 
 
 # Custom CSS for better styling
