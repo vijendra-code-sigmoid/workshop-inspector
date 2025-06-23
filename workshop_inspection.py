@@ -5,6 +5,8 @@ import io
 import base64
 from datetime import datetime
 import json
+import time
+from datetime import datetime
 
 # Configure page
 st.set_page_config(
@@ -13,6 +15,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+
+st.sidebar.image("Hero_MotoCorp_Logo.png", use_column_width=True)
+
 
 # Custom CSS for better styling
 st.markdown("""
@@ -103,7 +109,7 @@ WORKSHOP_AREAS = {
     }
 }
 
-def analyze_image(image, area_name):
+def analyze_image(image, area_name, image_name):
     """
     Mock image analysis function - Replace with actual AI/ML model
     In production, you would integrate with:
@@ -129,7 +135,13 @@ def analyze_image(image, area_name):
         
         if file_size < 10000:
             score *= 0.8  # Penalize very small file sizes
-            
+        
+        if any(x in image_name.lower() for x in ('not ok', 'not_ok', 'poor', 'bad', 'fail', "not")):
+            score = 0.3
+
+        elif any(x in image_name.lower() for x in ('ok', 'good', 'excellent')):
+            score = 0.9
+
         return "OK" if score > 0.6 else "NOT OK", score
     except:
         return "NOT OK", 0.0
@@ -147,7 +159,7 @@ def main():
     initialize_session_state()
     
     # Header
-    st.markdown('<h1 class="main-header">🏍️ Two-Wheeler Workshop Inspection Tool</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🏍️ Dealer Activation Report Submission</h1>', unsafe_allow_html=True)
     
     # Sidebar
     with st.sidebar:
@@ -179,7 +191,7 @@ def main():
             st.rerun()
     
     # Main content
-    st.markdown("### Upload images for each workshop area and get instant quality assessment")
+    st.markdown("### Upload image as per below checklist & get instant assessment")
     
     # Create tabs for better organization
     tab1, tab2 = st.tabs(["📷 Inspection Areas", "📊 Summary Report"])
@@ -193,7 +205,7 @@ def main():
                 col1, col2 = st.columns([2, 1])
                 
                 with col1:
-                    st.markdown(f"**Description:** {area_info['description']}")
+                    #st.markdown(f"**Description:** {area_info['description']}")
                     st.markdown(f"**Key Criteria:** {', '.join(area_info['criteria'])}")
                     
                     # File uploader
@@ -204,43 +216,65 @@ def main():
                         help=f"Upload a clear image of the {area_name.lower()}"
                     )
                     
-                    if uploaded_file is not None:
-                        # Display uploaded image
-                        image = Image.open(uploaded_file)
-                        st.image(image, caption=f"{area_name} - Uploaded Image", width=300)
+                    # if uploaded_file is not None:
+                    #     #continue
+                    #     # Display uploaded image
+                    #     image = Image.open(uploaded_file)
+                    #     st.image(image, caption=f"{area_name} - Uploaded Image", width=100)
                         
-                        # Store image in session state
-                        st.session_state.uploaded_images[area_name] = image
+                    #     # Store image in session state
+                    #     st.session_state.uploaded_images[area_name] = image
                         
-                        # Analyze image
-                        with st.spinner(f"Analyzing {area_name}..."):
-                            result, confidence = analyze_image(image, area_name)
-                            st.session_state.inspection_results[area_name] = (result, confidence)
+                    #     # Analyze image
+                    #     with st.spinner(f"Analyzing {area_name}..."):
+                    #         result, confidence = analyze_image(image, area_name)
+                    #         st.session_state.inspection_results[area_name] = (result, confidence)
                 
                 with col2:
                     # Display results
-                    if area_name in st.session_state.inspection_results:
-                        result, confidence = st.session_state.inspection_results[area_name]
+                    if uploaded_file is not None:
+                        # Display uploaded image
+                        image_name = uploaded_file.name
+                        image = Image.open(uploaded_file)
+                        #st.image(image, caption=f"{area_name} - Uploaded Image", width=100)
+                        st.image(image, width=150)
+
+                        # Store image in session state
+                        st.session_state.uploaded_images[area_name] = image
+
+                        # Analyze image
+                        with st.spinner(f"Analyzing {area_name}..."):
+                            result, confidence = analyze_image(image, area_name, image_name)
+                            st.session_state.inspection_results[area_name] = (result, confidence)
+                            st.markdown(f'<div class="status-ok">✅ Image Uploaded</div>', unsafe_allow_html=True)
+
+                    #else:
+                        #st.info("📤 Upload an image to get assessment")
+
+                    # Display inspection results
+
+                    # if area_name in st.session_state.inspection_results:
+                    #     result, confidence = st.session_state.inspection_results[area_name]
                         
-                        if result == "OK":
-                            st.markdown(f'<div class="status-ok">✅ {result}</div>', unsafe_allow_html=True)
-                            st.success(f"Confidence: {confidence:.1%}")
-                        else:
-                            st.markdown(f'<div class="status-not-ok">❌ {result}</div>', unsafe_allow_html=True)
-                            st.error(f"Confidence: {confidence:.1%}")
+                    #     if result == "OK":
+                    #         st.markdown(f'<div class="status-ok">✅ Image Uploaded</div>', unsafe_allow_html=True)
+                    #         st.success(f"Confidence: {confidence:.1%}")
+                    #     else:
+                    #         st.markdown(f'<div class="status-not-ok">❌ {result}</div>', unsafe_allow_html=True)
+                    #         st.error(f"Confidence: {confidence:.1%}")
                         
-                        # Action buttons
-                        col_a, col_b = st.columns(2)
-                        with col_a:
-                            if st.button(f"✅ Mark OK", key=f"ok_{area_name}", help="Override as OK"):
-                                st.session_state.inspection_results[area_name] = ("OK", 1.0)
-                                st.rerun()
-                        with col_b:
-                            if st.button(f"❌ Mark NOT OK", key=f"not_ok_{area_name}", help="Override as NOT OK"):
-                                st.session_state.inspection_results[area_name] = ("NOT OK", 1.0)
-                                st.rerun()
-                    else:
-                        st.info("📤 Upload an image to get assessment")
+                        # # Action buttons
+                        # col_a, col_b = st.columns(2)
+                        # with col_a:
+                        #     if st.button(f"✅ Mark OK", key=f"ok_{area_name}", help="Override as OK"):
+                        #         st.session_state.inspection_results[area_name] = ("OK", 1.0)
+                        #         st.rerun()
+                        # with col_b:
+                        #     if st.button(f"❌ Mark NOT OK", key=f"not_ok_{area_name}", help="Override as NOT OK"):
+                        #         st.session_state.inspection_results[area_name] = ("NOT OK", 1.0)
+                        #         st.rerun()
+                    # else:
+                    #     st.info("📤 Upload an image to get assessment")
                 
                 st.markdown("---")
     
@@ -261,14 +295,14 @@ def main():
                         "Area": area_name,
                         "Status": result,
                         "Confidence": f"{confidence:.1%}",
-                        "Description": area_info['description']
+                        #"Description": area_info['description']
                     })
                 else:
                     summary_data.append({
                         "Area": area_name,
                         "Status": "Pending",
                         "Confidence": "-",
-                        "Description": area_info['description']
+                        #"Description": area_info['description']
                     })
             
             df = pd.DataFrame(summary_data)
@@ -319,6 +353,12 @@ def main():
                     file_name=f"workshop_inspection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime="text/csv"
                 )
+
+            # Simulated Email Button
+            if st.button("📧 Email Report"):
+                with st.spinner("Sending email..."):
+                    time.sleep(1)  # Simulate delay
+                st.success("📤 Email sent successfully!")
             
             # Recommendations based on results
             st.markdown("### 🎯 Recommendations")
