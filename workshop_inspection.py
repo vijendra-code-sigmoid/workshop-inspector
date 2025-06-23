@@ -5,6 +5,8 @@ import io
 import base64
 from datetime import datetime
 import json
+import time
+from datetime import datetime
 
 # Configure page
 st.set_page_config(
@@ -13,6 +15,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+
+st.sidebar.image("Hero_MotoCorp_Logo.png", use_column_width=True)
+
 
 # Custom CSS for better styling
 st.markdown("""
@@ -61,49 +67,49 @@ st.markdown("""
 
 # Workshop areas configuration
 WORKSHOP_AREAS = {
-    "Reception Area": {
-        "description": "Customer reception and waiting area",
-        "criteria": ["Cleanliness", "Professional appearance", "Customer seating", "Information displays"]
+    "Showroom- Frontage": {
+        "description": "Showroom front facade and entry area",
+        "criteria": ["Front Facade", "Parking Area", "Showroom Entry"]
     },
-    "Service Bay": {
-        "description": "Main vehicle service and repair area",
-        "criteria": ["Tool organization", "Work area cleanliness", "Safety equipment", "Proper lighting"]
+    "Showroom Elements- Inside view 1": {
+        "description": "Interior view of showroom with design and reception elements",
+        "criteria": ["Reception", "Colour Pallet", "Grey Lacquered Glass Wall"]
     },
-    "Parking Area": {
-        "description": "Customer and service vehicle parking",
-        "criteria": ["Clear markings", "Adequate space", "Safety measures", "Accessibility"]
+    "Showroom Elements- Inside view 2": {
+        "description": "Interior showroom view with merchandise and discussion zones",
+        "criteria": ["Merchandise Wall", "Discussion Zone", "Display Zone"]
     },
-    "Bathroom/Restroom": {
-        "description": "Customer and staff restroom facilities",
-        "criteria": ["Cleanliness", "Supplies availability", "Functionality", "Hygiene standards"]
+    "Workshop- Reception Area": {
+        "description": "Reception area within the workshop for customer interaction",
+        "criteria": ["Reception backdrop", "Podium", "Tab & Printer"]
     },
-    "Guest Waiting Room": {
-        "description": "Comfortable waiting area for customers",
-        "criteria": ["Seating comfort", "Entertainment facilities", "Cleanliness", "Air conditioning"]
+    "Workshop- Floor Area with Manpower": {
+        "description": "Workshop floor in use with technicians and tools",
+        "criteria": ["Ramps with technician", "Equipments- Spark plug cleaner", "Battery charger"]
     },
-    "Notice Board": {
-        "description": "Information and announcement display area",
-        "criteria": ["Updated information", "Clear visibility", "Organized display", "Relevant content"]
+    "Workshop- Washing Area": {
+        "description": "Dedicated area for vehicle washing and drying",
+        "criteria": ["Washing Pump", "Drying Area"]
     },
-    "Parts Storage": {
-        "description": "Spare parts and inventory storage area",
-        "criteria": ["Organization", "Proper labeling", "Security", "Inventory management"]
+    "Workshop- Customer Lounge": {
+        "description": "Lounge area for customers within the workshop",
+        "criteria": ["Vision Wall", "TV", "Sofa", "AC"]
     },
-    "Workshop Floor": {
-        "description": "General workshop floor and common areas",
-        "criteria": ["Cleanliness", "Safety compliance", "Equipment placement", "Workflow efficiency"]
+    "Workshop- Spare Parts Area": {
+        "description": "Area for storing and organizing spare parts",
+        "criteria": ["Racks & Bins", "Initial Parts Kit & HGO"]
     },
-    "Staff Area": {
-        "description": "Staff break room and facilities",
-        "criteria": ["Cleanliness", "Basic amenities", "Comfort", "Organization"]
+    "Workshop- Special & General tools": {
+        "description": "Section for storing and accessing tools used in the workshop",
+        "criteria": ["Precision tools", "Diagnostic tools", "Special tools"]
     },
-    "Exterior/Facade": {
-        "description": "Building exterior and signage",
-        "criteria": ["Brand visibility", "Maintenance", "Professional appearance", "Accessibility"]
+    "Workshop- Customer & Staff washroom": {
+        "description": "Separate restrooms for customers and staff",
+        "criteria": ["Separate washroom for HE/SHE"]
     }
 }
 
-def analyze_image(image, area_name):
+def analyze_image(image, area_name, image_name):
     """
     Mock image analysis function - Replace with actual AI/ML model
     In production, you would integrate with:
@@ -129,7 +135,13 @@ def analyze_image(image, area_name):
         
         if file_size < 10000:
             score *= 0.8  # Penalize very small file sizes
-            
+        
+        if any(x in image_name.lower() for x in ('not ok', 'not_ok', 'poor', 'bad', 'fail', "not")):
+            score = 0.3
+
+        elif any(x in image_name.lower() for x in ('ok', 'good', 'excellent')):
+            score = 0.9
+
         return "OK" if score > 0.6 else "NOT OK", score
     except:
         return "NOT OK", 0.0
@@ -147,7 +159,7 @@ def main():
     initialize_session_state()
     
     # Header
-    st.markdown('<h1 class="main-header">🏍️ Two-Wheeler Workshop Inspection Tool</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🏍️ Dealer Activation Report Submission</h1>', unsafe_allow_html=True)
     
     # Sidebar
     with st.sidebar:
@@ -179,7 +191,7 @@ def main():
             st.rerun()
     
     # Main content
-    st.markdown("### Upload images for each workshop area and get instant quality assessment")
+    st.markdown("### Upload image as per below checklist & get instant assessment")
     
     # Create tabs for better organization
     tab1, tab2 = st.tabs(["📷 Inspection Areas", "📊 Summary Report"])
@@ -193,7 +205,7 @@ def main():
                 col1, col2 = st.columns([2, 1])
                 
                 with col1:
-                    st.markdown(f"**Description:** {area_info['description']}")
+                    #st.markdown(f"**Description:** {area_info['description']}")
                     st.markdown(f"**Key Criteria:** {', '.join(area_info['criteria'])}")
                     
                     # File uploader
@@ -204,43 +216,65 @@ def main():
                         help=f"Upload a clear image of the {area_name.lower()}"
                     )
                     
-                    if uploaded_file is not None:
-                        # Display uploaded image
-                        image = Image.open(uploaded_file)
-                        st.image(image, caption=f"{area_name} - Uploaded Image", width=300)
+                    # if uploaded_file is not None:
+                    #     #continue
+                    #     # Display uploaded image
+                    #     image = Image.open(uploaded_file)
+                    #     st.image(image, caption=f"{area_name} - Uploaded Image", width=100)
                         
-                        # Store image in session state
-                        st.session_state.uploaded_images[area_name] = image
+                    #     # Store image in session state
+                    #     st.session_state.uploaded_images[area_name] = image
                         
-                        # Analyze image
-                        with st.spinner(f"Analyzing {area_name}..."):
-                            result, confidence = analyze_image(image, area_name)
-                            st.session_state.inspection_results[area_name] = (result, confidence)
+                    #     # Analyze image
+                    #     with st.spinner(f"Analyzing {area_name}..."):
+                    #         result, confidence = analyze_image(image, area_name)
+                    #         st.session_state.inspection_results[area_name] = (result, confidence)
                 
                 with col2:
                     # Display results
-                    if area_name in st.session_state.inspection_results:
-                        result, confidence = st.session_state.inspection_results[area_name]
+                    if uploaded_file is not None:
+                        # Display uploaded image
+                        image_name = uploaded_file.name
+                        image = Image.open(uploaded_file)
+                        #st.image(image, caption=f"{area_name} - Uploaded Image", width=100)
+                        st.image(image, width=150)
+
+                        # Store image in session state
+                        st.session_state.uploaded_images[area_name] = image
+
+                        # Analyze image
+                        with st.spinner(f"Analyzing {area_name}..."):
+                            result, confidence = analyze_image(image, area_name, image_name)
+                            st.session_state.inspection_results[area_name] = (result, confidence)
+                            st.markdown(f'<div class="status-ok">✅ Image Uploaded</div>', unsafe_allow_html=True)
+
+                    #else:
+                        #st.info("📤 Upload an image to get assessment")
+
+                    # Display inspection results
+
+                    # if area_name in st.session_state.inspection_results:
+                    #     result, confidence = st.session_state.inspection_results[area_name]
                         
-                        if result == "OK":
-                            st.markdown(f'<div class="status-ok">✅ {result}</div>', unsafe_allow_html=True)
-                            st.success(f"Confidence: {confidence:.1%}")
-                        else:
-                            st.markdown(f'<div class="status-not-ok">❌ {result}</div>', unsafe_allow_html=True)
-                            st.error(f"Confidence: {confidence:.1%}")
+                    #     if result == "OK":
+                    #         st.markdown(f'<div class="status-ok">✅ Image Uploaded</div>', unsafe_allow_html=True)
+                    #         st.success(f"Confidence: {confidence:.1%}")
+                    #     else:
+                    #         st.markdown(f'<div class="status-not-ok">❌ {result}</div>', unsafe_allow_html=True)
+                    #         st.error(f"Confidence: {confidence:.1%}")
                         
-                        # Action buttons
-                        col_a, col_b = st.columns(2)
-                        with col_a:
-                            if st.button(f"✅ Mark OK", key=f"ok_{area_name}", help="Override as OK"):
-                                st.session_state.inspection_results[area_name] = ("OK", 1.0)
-                                st.rerun()
-                        with col_b:
-                            if st.button(f"❌ Mark NOT OK", key=f"not_ok_{area_name}", help="Override as NOT OK"):
-                                st.session_state.inspection_results[area_name] = ("NOT OK", 1.0)
-                                st.rerun()
-                    else:
-                        st.info("📤 Upload an image to get assessment")
+                        # # Action buttons
+                        # col_a, col_b = st.columns(2)
+                        # with col_a:
+                        #     if st.button(f"✅ Mark OK", key=f"ok_{area_name}", help="Override as OK"):
+                        #         st.session_state.inspection_results[area_name] = ("OK", 1.0)
+                        #         st.rerun()
+                        # with col_b:
+                        #     if st.button(f"❌ Mark NOT OK", key=f"not_ok_{area_name}", help="Override as NOT OK"):
+                        #         st.session_state.inspection_results[area_name] = ("NOT OK", 1.0)
+                        #         st.rerun()
+                    # else:
+                    #     st.info("📤 Upload an image to get assessment")
                 
                 st.markdown("---")
     
@@ -261,14 +295,14 @@ def main():
                         "Area": area_name,
                         "Status": result,
                         "Confidence": f"{confidence:.1%}",
-                        "Description": area_info['description']
+                        #"Description": area_info['description']
                     })
                 else:
                     summary_data.append({
                         "Area": area_name,
                         "Status": "Pending",
                         "Confidence": "-",
-                        "Description": area_info['description']
+                        #"Description": area_info['description']
                     })
             
             df = pd.DataFrame(summary_data)
@@ -319,6 +353,12 @@ def main():
                     file_name=f"workshop_inspection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime="text/csv"
                 )
+
+            # Simulated Email Button
+            if st.button("📧 Email Report"):
+                with st.spinner("Sending email..."):
+                    time.sleep(1)  # Simulate delay
+                st.success("📤 Email sent successfully!")
             
             # Recommendations based on results
             st.markdown("### 🎯 Recommendations")
