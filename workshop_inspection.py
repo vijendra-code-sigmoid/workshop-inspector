@@ -61,45 +61,45 @@ st.markdown("""
 
 # Workshop areas configuration
 WORKSHOP_AREAS = {
-    "Reception Area": {
-        "description": "Customer reception and waiting area",
-        "criteria": ["Cleanliness", "Professional appearance", "Customer seating", "Information displays"]
+    "Showroom- Frontage": {
+        "description": "Showroom front facade and entry area",
+        "criteria": ["Front Facade", "Parking Area", "Showroom Entry"]
     },
-    "Service Bay": {
-        "description": "Main vehicle service and repair area",
-        "criteria": ["Tool organization", "Work area cleanliness", "Safety equipment", "Proper lighting"]
+    "Showroom Elements- Inside view 1": {
+        "description": "Interior view of showroom with design and reception elements",
+        "criteria": ["Reception", "Colour Pallet", "Grey Lacquered Glass Wall"]
     },
-    "Parking Area": {
-        "description": "Customer and service vehicle parking",
-        "criteria": ["Clear markings", "Adequate space", "Safety measures", "Accessibility"]
+    "Showroom Elements- Inside view 2": {
+        "description": "Interior showroom view with merchandise and discussion zones",
+        "criteria": ["Merchandise Wall", "Discussion Zone", "Display Zone"]
     },
-    "Bathroom/Restroom": {
-        "description": "Customer and staff restroom facilities",
-        "criteria": ["Cleanliness", "Supplies availability", "Functionality", "Hygiene standards"]
+    "Workshop- Reception Area": {
+        "description": "Reception area within the workshop for customer interaction",
+        "criteria": ["Reception backdrop", "Podium", "Tab & Printer"]
     },
-    "Guest Waiting Room": {
-        "description": "Comfortable waiting area for customers",
-        "criteria": ["Seating comfort", "Entertainment facilities", "Cleanliness", "Air conditioning"]
+    "Workshop- Floor Area with Manpower": {
+        "description": "Workshop floor in use with technicians and tools",
+        "criteria": ["Ramps with technician", "Equipments- Spark plug cleaner", "Battery charger"]
     },
-    "Notice Board": {
-        "description": "Information and announcement display area",
-        "criteria": ["Updated information", "Clear visibility", "Organized display", "Relevant content"]
+    "Workshop- Washing Area": {
+        "description": "Dedicated area for vehicle washing and drying",
+        "criteria": ["Washing Pump", "Drying Area"]
     },
-    "Parts Storage": {
-        "description": "Spare parts and inventory storage area",
-        "criteria": ["Organization", "Proper labeling", "Security", "Inventory management"]
+    "Workshop- Customer Lounge": {
+        "description": "Lounge area for customers within the workshop",
+        "criteria": ["Vision Wall", "TV", "Sofa", "AC"]
     },
-    "Workshop Floor": {
-        "description": "General workshop floor and common areas",
-        "criteria": ["Cleanliness", "Safety compliance", "Equipment placement", "Workflow efficiency"]
+    "Workshop- Spare Parts Area": {
+        "description": "Area for storing and organizing spare parts",
+        "criteria": ["Racks & Bins", "Initial Parts Kit & HGO"]
     },
-    "Staff Area": {
-        "description": "Staff break room and facilities",
-        "criteria": ["Cleanliness", "Basic amenities", "Comfort", "Organization"]
+    "Workshop- Special & General tools": {
+        "description": "Section for storing and accessing tools used in the workshop",
+        "criteria": ["Precision tools", "Diagnostic tools", "Special tools"]
     },
-    "Exterior/Facade": {
-        "description": "Building exterior and signage",
-        "criteria": ["Brand visibility", "Maintenance", "Professional appearance", "Accessibility"]
+    "Workshop- Customer & Staff washroom": {
+        "description": "Separate restrooms for customers and staff",
+        "criteria": ["Separate washroom for HE/SHE"]
     }
 }
 
