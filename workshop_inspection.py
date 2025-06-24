@@ -11,13 +11,13 @@ from datetime import datetime
 # Configure page
 st.set_page_config(
     page_title="Workshop Inspection Tool",
-    page_icon="🏍️",
+    page_icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAeFBMVEVHcEz49fWgnp8jHyA/PD18eXojHyAfGxw2MzReW1wjHyAtKStHRUWlpKP0cXZBPz/vO0L38PD49/ftGiLtHCTvMjj4q68pJibtHCTtGCDxXWLwRkv3o6btFR7yZ2tOS0xRTk8TDQ+SkJFbWFlqaGljYGLvP0XtEBogSfLOAAAAJ3RSTlMACBk65lY2//CE//+1OVPYxxMky//sTPXJ/5CzLf+Ht4M7YKaCg4xvYlDgAAAAqklEQVR4AX3QRRKFQAwA0cwgwd3duf8Jv0ugKvT27RpOCQl8iqoJFnU0TMmihbbjAs0Tf7Qs9DWKQRAStFCNCMZJmhG0copFUiaVYPFR3Vxg24k3ot2HZyw/iOpAjSJavUaJ4mibEjiUEwCL79yQRTnZEYfubOUMCs23kEE5G2hZDIrF5hFAU/GIMUEInSPWFAFWlWJTJyU7AcItbQme84KdR2jqCwQRwqk7bagS0TTP5PcAAAAASUVORK5CYII=",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 
-st.sidebar.image("Hero_MotoCorp_Logo.png", use_container_width=True)
+st.sidebar.image("Hero_MotoCorp_Logo.png", use_column_width=True)
 
 
 # Custom CSS for better styling
@@ -159,8 +159,13 @@ def main():
     initialize_session_state()
     
     # Header
-    st.markdown('<h1 class="main-header">🏍️ Dealer Activation Report Submission</h1>', unsafe_allow_html=True)
-    
+    #st.markdown('<h1 class="main-header">🏍️ Dealer Activation Report Submission</h1>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style='display: flex; align-items: center; gap: 10px;'>
+        <img src='https://www.heromotocorp.com/content/dam/hero-aem-website/brand/logo/logo.svg' alt='Hero Logo' style='height: 50px;' />
+        <h1 style='margin: 0;'>Dealer Activation Report Submission</h1>
+    </div>
+                """, unsafe_allow_html=True)
     # Sidebar
     with st.sidebar:
         st.markdown("### Inspection Dashboard")
