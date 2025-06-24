@@ -12,6 +12,6 @@ To run the application:
 3. Run the application:
 
    ```bash
-streamlit run workshop_inspection.py
+   streamlit run workshop_inspection.py
 
 4. See the report
